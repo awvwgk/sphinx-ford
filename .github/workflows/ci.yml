@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    # Weekly: catch upstream Sphinx/FORD breakage
+    - cron: "0 6 * * 1"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Ruff check (lint)
+        run: ruff check src/ tests/
+
+      - name: Ruff format (check)
+        run: ruff format --check src/ tests/
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13", "3.14"]
+
+    name: "Python ${{ matrix.python }}"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          allow-prereleases: true
+
+      - name: Install dependencies
+        run: |
+          pip install -e .[auto,test]
+
+      - name: Show versions
+        run: |
+          python --version
+          python -c "import sphinx; print('sphinx', sphinx.__version__)"
+          python -c "import ford; print('ford', getattr(ford, '__version__', 'unknown'))"
+
+      - name: Run tests
+        run: |
+          python -m pytest tests/ -v --tb=short --cov=sphinx_ford --cov-report=term-missing

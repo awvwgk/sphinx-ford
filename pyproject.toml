@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sphinx-ford"
+version = "0.1.0"
+description = "Sphinx domain for Fortran with FORD bridge"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+dependencies = [
+    "sphinx>=6.0",
+]
+optional-dependencies.auto = [
+  "ford>=6.1",
+  "markdown-it-py>=3.0",
+]
+optional-dependencies.test = [
+  "pytest>=7.0",
+  "pytest-cov",
+]
+optional-dependencies.docs = [
+  "sphinx-book-theme",
+  "sphinx-design",
+  "myst-parser",
+  "ford>=6.1",
+  "markdown-it-py>=3.0",
+  "fypp",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 99
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["sphinx_ford"]
