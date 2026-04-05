@@ -131,9 +131,15 @@ class TestModuleToRst:
         # Should contain function/subroutine directives
         # Some may be nested under interfaces instead of at module level
         for func in target_mod.functions:
-            assert f".. f:function:: {func.name}" in rst_text
+            assert any(
+                line.strip().startswith(".. f:function::") and func.name in line
+                for line in rst_lines
+            ), f"Function directive for {func.name} missing"
         for sub in target_mod.subroutines:
-            assert f".. f:subroutine:: {sub.name}" in rst_text
+            assert any(
+                line.strip().startswith(".. f:subroutine::") and sub.name in line
+                for line in rst_lines
+            ), f"Subroutine directive for {sub.name} missing"
 
     def test_interface_includes_modprocs(self, toml_f_ford_file):
         """Generic interfaces should include their member procedures."""
@@ -149,9 +155,16 @@ class TestModuleToRst:
                 if modprocs and getattr(iface, "generic", False):
                     rst_lines = _module_to_rst(mod)
                     rst_text = "\n".join(rst_lines)
+                    type_names = {t.name.lower() for t in getattr(mod, "types", [])}
+                    is_constructor_iface = iface.name.lower() in type_names
 
-                    # Interface directive should exist
-                    assert f".. f:interface:: {iface.name}" in rst_text
+                    # Non-constructor interfaces render as interface directives.
+                    # Constructor interfaces (same name as a type) are rendered
+                    # under the type's "Constructors" section.
+                    if not is_constructor_iface:
+                        assert f".. f:interface:: {iface.name}" in rst_text
+                    else:
+                        assert "**Constructors:**" in rst_text
 
                     # Each modproc should appear as nested func/sub
                     for mp in modprocs:

@@ -28,6 +28,11 @@ optional-dependencies.docs = [
   "markdown-it-py>=3.0",
   "fypp",
 ]
+classifiers = [
+  "Framework :: Sphinx :: Domain",
+]
+urls.repository = "https://github.com/awvwgk/sphinx-ford"
+urls.documentation = "https://awvwgk.github.io/sphinx-ford/"
 
 [tool.setuptools.packages.find]
 where = ["src"]

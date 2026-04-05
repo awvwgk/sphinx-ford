@@ -76,7 +76,7 @@ contents with:
 
          # My Fortran Library
 
-         ```{f:module} physics
+         ````{f:module} physics
          :permission: public
 
          Physical constants and utility routines.
@@ -97,7 +97,7 @@ contents with:
          :intent velocity: in
          :rtype: real(dp)
          ```
-         ```
+         ````
 
 Building and viewing the result
 -------------------------------
@@ -112,11 +112,29 @@ We open ``_build/html/index.html`` in a browser. We should see:
 - A **parameter speed_of_light** entry (because we used ``:parameter:``).
 - A **function kinetic_energy(mass, velocity)** with typed parameters.
 
-Rendered output:
+This renders as:
 
-- Module heading for ``physics`` appears with its description.
-- ``speed_of_light`` appears as a parameter entry.
-- ``kinetic_energy(mass, velocity)`` appears with typed argument fields.
+   .. f:module:: physics
+      :permission: public
+
+      Physical constants and utility routines.
+
+      .. f:variable:: speed_of_light
+         :parameter:
+
+         Speed of light in vacuum (m/s).
+
+      .. f:function:: kinetic_energy(mass, velocity)
+
+         Compute kinetic energy.
+
+         :param mass: Object mass
+         :ftype mass: real(dp)
+         :intent mass: in
+         :param velocity: Object velocity
+         :ftype velocity: real(dp)
+         :intent velocity: in
+         :rtype: real(dp)
 
 Adding cross-references
 -----------------------
@@ -155,11 +173,15 @@ file:
 We rebuild and notice that ``physics`` and ``physics.kinetic_energy``
 are now clickable links pointing back to their definitions above.
 
-Rendered output:
+This renders as:
 
-- Module heading for ``simulation`` appears.
-- References to ``physics`` and ``physics.kinetic_energy`` are clickable links.
-- Subroutine ``run(dt)`` appears nested under the module.
+   .. f:module:: simulation
+
+      Simulation routines. Uses :f:mod:`physics`.
+
+      .. f:subroutine:: run(dt)
+
+         Run a simulation step using :f:func:`physics.kinetic_energy`.
 
 What we have created
 --------------------
